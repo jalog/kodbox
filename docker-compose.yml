@@ -1,0 +1,45 @@
+version: "3"
+services:
+  nginx:
+    image: nginx:latest
+    container_name: "jwnginx"
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - TZ=Asia/Shanghai
+    depends_on:
+      - "php"
+      - "redis"
+    volumes:
+      - "~/Dev/kodbox/docker/nginx/conf.d:/etc/nginx/conf.d"
+      - "~/Dev/kodbox:/usr/share/nginx/html"
+      - "~/Dev/kodbox/docker/nginx/log:/var/log/nginx"
+    networks:
+      - net-app
+  php:
+    image: php:5.6-fpm
+    container_name: "jwdiskphp"
+    restart: always
+    ports:
+      - "9000:9000"
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - "~/Dev/kodbox:/usr/share/nginx/html"
+    networks:
+      - net-app
+  redis:
+    image: redis:latest
+    container_name: "jwredis"
+    ports:
+      - "6379:6379"
+    volumes:
+      - "~/Dev/kodbox/docker/redis/data:/data"
+      - "~/Dev/kodbox/docker/redis/redis.conf:/usr/local/etc/redis/redis.conf"
+      - "~/Dev/kodbox/docker/redis/log:/logs"
+    networks:
+      - net-app
+networks:
+  net-app:
